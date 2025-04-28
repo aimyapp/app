@@ -4,50 +4,54 @@ plugins {
 	id 'io.spring.dependency-management' version '1.1.7'
 }
 
-group = 'com.example.app'
-version = '0.0.1-SNAPSHOT'
+def env = project.findProperty('env')
 
-java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(17)
+// envが指定されている場合のみ、追加でファイルを読み込む
+if (env != null) {
+	def envFile = file("build-${env}.gradle")
+	if (envFile.exists()) {
+		apply from: envFile
+		println "Applied build-${env}.gradle"
 	}
-}
+} else {
 
-configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
+	println "Applied build.gradle"
+
+	group = 'com.example.app'
+	version = '0.0.1-SNAPSHOT'
+
+	java {
+		toolchain {
+			languageVersion = JavaLanguageVersion.of(17)
+		}
 	}
-}
 
-repositories {
-	mavenLocal() // ローカルリポジトリを参照
-	mavenCentral()
-}
+	configurations {
+		compileOnly {
+			extendsFrom annotationProcessor
+		}
+	}
 
-// 環境に応じて別のファイルを適用
-//def environment = project.hasProperty('environment') ? project.property('environment') : 'default'
-//println "Current environment: $environmshownt"
-//
-//if (environment == 'local') {
-//	apply from: 'local.gradle'
-//	println "Using local.gradle for local environment"
-//} else {
-//	println "Using build.gradle for other environments"
-//}
+	repositories {
+		mavenLocal() // ローカルリポジトリを参照
+		mavenCentral()
+	}
 
-dependencies {
-	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.4'
-	implementation 'com.example:db:0.0.2'
-	implementation 'com.mysql:mysql-connector-j:8.3.0'
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.1.0'
-	compileOnly 'org.projectlombok:lombok'
-	developmentOnly 'org.springframework.boot:spring-boot-devtools'
-	annotationProcessor 'org.projectlombok:lombok'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-}
+	dependencies {
+		implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.4'
+		implementation 'com.example:db:0.0.2'
+		implementation 'com.mysql:mysql-connector-j:8.3.0'
+		implementation 'org.springframework.boot:spring-boot-starter-web'
+		implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.1.0'
+		compileOnly 'org.projectlombok:lombok'
+		developmentOnly 'org.springframework.boot:spring-boot-devtools'
+		annotationProcessor 'org.projectlombok:lombok'
+		testImplementation 'org.springframework.boot:spring-boot-starter-test'
+		testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	}
 
-tasks.named('test') {
-	useJUnitPlatform()
+	tasks.named('test') {
+		useJUnitPlatform()
+	}
+
 }
