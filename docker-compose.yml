@@ -1,0 +1,14 @@
+services:
+  mysql:
+    platform: linux/x86_64
+    build: ./docker/mysql
+    ports:
+      - 3306:3306
+    volumes:
+      - ./docker/mysql/initdb.d:/docker-entrypoint-initdb.d
+      - ./docker/mysql/conf.d:/etc/mysql/conf.d
+    environment:
+      - MYSQL_DATABASE=db
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=password
+      - MYSQL_ROOT_PASSWORD=rootpassword
